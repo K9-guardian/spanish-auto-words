@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .centerText {
+            text-align: center;
+        }
+        
+        .centerTextBox {
+            margin: 0px auto;
+            width: 80%;
+            height: 50vh;
+            display: block;
+        }
+        
+        .centerButton {
+            margin: auto;
+            margin-top: 2%;
+            width: auto;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="centerText">Input</h1>
+    <textarea class="centerTextBox" id="inputText"></textarea>
+    <button class="centerButton" onclick="makeDoc()">Make Document</button>
+    <h1 class="centerText">Output</h1>
+    <textarea class="centerTextBox" id="outputText"></textarea>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+    async function makeDoc() {
+        var lines = $("#inputText").val().split(/\s+/);
+        var output = $("#outputText");
+        var spanishWords = [];
+        var definitions = [];
+        var sentences = [];
+        var outputString = "";
+        const proxyurl = "https://cors-anywhere.herokuapp.com/";
+
+        // Get Spanish word and sentence and English Definition
+        for (let i = 0; i < lines.length; i++) {
+            var english = lines[i];
+            const urlSpanish = "https://www.spanishdict.com/translate/" + english;
+            const urlDict = "https://www.merriam-webster.com/dictionary/" + english;
+            await $.get(proxyurl + urlSpanish, function(responseText) {
+                var index = responseText.indexOf("<a href=\"/translate/");
+                var spanish = "";
+                var sentence = "";
+
+                while (responseText.charAt(index) != '>')
+                    index++;
+
+                index++;
+
+                while (responseText.charAt(index) != '<') {
+                    spanish += responseText.charAt(index);
+                    index++;
+                }
+
+                index = responseText.indexOf("<em class=\"exB\">");
+
+                while (responseText.charAt(index) != '>')
+                    index++;
+
+                index++;
+
+                while (responseText.charAt(index) != '<') {
+                    sentence += responseText.charAt(index);
+                    index++;
+                }
+
+                console.log(spanish + sentence);
+                spanishWords.push(spanish);
+                sentences.push(sentence);
+            });
+
+            await $.get(proxyurl + urlDict, function(responseText) {
+                var index = responseText.indexOf("<strong class=\"mw_t_bc\">: </strong>");
+                var def = "";
+
+                while (responseText.charAt(index) != '>')
+                    index++;
+
+                index++;
+
+                while (responseText.charAt(index) != '>')
+                    index++;
+
+
+                index++;
+
+                while (responseText.charAt(index) != '<') {
+                    def += responseText.charAt(index)
+                    index++;
+                }
+                def = def.trim();
+                console.log(def);
+                definitions.push(def);
+            });
+        }
+
+        // Change English Definitions to Spanish Definition
+        for (var i = 0; i < definitions.length; i++) {
+            var englishDef = definitions[i];
+
+            const urlChange = "https://www.spanishdict.com/translate/" + englishDef;
+
+            await $.get(proxyurl + urlChange, function(responseText) {
+                console.log(responseText);
+                var index = responseText.indexOf("\"displayText\"");
+                var spanishDef = "";
+
+                /*
+                while (responseText.indexOf(index) != ':')
+                    index++;
+
+                index += 2;
+
+                while (responseText.indexOf(index) != '"') {
+                    spanishDef += responseText.charAt(index);
+                    index++;
+                }
+                console.log(spanishDef);
+                definitions[i] = spanishDef;
+                */
+            });
+        }
+
+        // Combine word arrays into one string
+        for (var i = 0; i < lines.length; i++) {
+            outputString += lines[i] + " - " + spanishWords[i] + "\n";
+            outputString += definitions[i] + "\n";
+            outputString += sentences[i] + "\n\n";
+        }
+        output.val(outputString);
+    }
+</script>
+
+</html>
