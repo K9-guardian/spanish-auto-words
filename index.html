@@ -46,73 +46,85 @@
         // Get Spanish word and sentence and English Definition
         for (let i = 0; i < lines.length; i++) {
             var english = lines[i];
-            const urlSpanish = "https://www.spanishdict.com/translate/" + english;
+            const urlSpanish = "https://www.spanishdict.com/translation/" + english;
             const urlDict = "https://www.merriam-webster.com/dictionary/" + english;
-            await $.get(proxyurl + urlSpanish, function(responseText) {
-                var index = responseText.indexOf("<a href=\"/translate/");
-                var spanish = "";
-                var sentence = "";
 
-                while (responseText.charAt(index) != '>')
+            await fetch(proxyurl + urlSpanish)
+                .then(response => response.text())
+                .then(text => {
+                    var index = text.indexOf("<a href=\"/translate/");
+                    var spanish = "";
+                    var sentence = "";
+
+                    while (text.charAt(index) != '>')
+                        index++;
+
                     index++;
 
-                index++;
+                    while (text.charAt(index) != '<') {
+                        spanish += text.charAt(index);
+                        index++;
+                    }
 
-                while (responseText.charAt(index) != '<') {
-                    spanish += responseText.charAt(index);
-                    index++;
-                }
+                    index = text.indexOf("<em class=\"exB\">");
 
-                index = responseText.indexOf("<em class=\"exB\">");
+                    while (text.charAt(index) != '>')
+                        index++;
 
-                while (responseText.charAt(index) != '>')
-                    index++;
-
-                index++;
-
-                while (responseText.charAt(index) != '<') {
-                    sentence += responseText.charAt(index);
-                    index++;
-                }
-
-                console.log(spanish + sentence);
-                spanishWords.push(spanish);
-                sentences.push(sentence);
-            });
-
-            await $.get(proxyurl + urlDict, function(responseText) {
-                var index = responseText.indexOf("<strong class=\"mw_t_bc\">: </strong>");
-                var def = "";
-
-                while (responseText.charAt(index) != '>')
                     index++;
 
-                index++;
+                    while (text.charAt(index) != '<') {
+                        sentence += text.charAt(index);
+                        index++;
+                    }
 
-                while (responseText.charAt(index) != '>')
+                    console.log(spanish + sentence);
+                    spanishWords.push(spanish);
+                    sentences.push(sentence);
+                });
+
+            await fetch(proxyurl + urlDict)
+                .then(response => response.text())
+                .then(text => {
+                    var index = text.indexOf("<strong class=\"mw_t_bc\">: </strong>");
+                    var def = "";
+
+                    while (text.charAt(index) != '>')
+                        index++;
+
                     index++;
 
+                    while (text.charAt(index) != '>')
+                        index++;
 
-                index++;
 
-                while (responseText.charAt(index) != '<') {
-                    def += responseText.charAt(index)
                     index++;
-                }
-                def = def.trim();
-                console.log(def);
-                definitions.push(def);
-            });
+
+                    while (text.charAt(index) != '<') {
+                        def += text.charAt(index)
+                        index++;
+                    }
+                    def = def.trim();
+
+                    console.log(def);
+                    definitions.push(def);
+                });
         }
 
         // Change English Definitions to Spanish Definition
-        for (var i = 0; i < definitions.length; i++) {
+        for (let i = 0; i < definitions.length; i++) {
             var englishDef = definitions[i];
+            const testUrl = "https://translate.google.com/#view=home&op=translate&sl=en&tl=es&text=" + englishDef;
+            const urlChange = "https://www.spanishdict.com/translation/" + englishDef;
 
-            const urlChange = "https://www.spanishdict.com/translate/" + englishDef;
+            await fetch(proxyurl + urlChange)
+                .then(response => response.text())
+                .then(text => {
+                    console.log(text);
+                });
 
-            await $.get(proxyurl + urlChange, function(responseText) {
-                console.log(responseText);
+            await $.get(proxyurl + testUrl, function(responseText) {
+                //console.log(responseText);
                 var index = responseText.indexOf("\"displayText\"");
                 var spanishDef = "";
 
