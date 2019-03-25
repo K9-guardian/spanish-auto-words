@@ -1,7 +1,7 @@
 {
     "name": "spanish-auto-words",
     "version": "1.0.0",
-    "description": "Converts english to spanish, makes sentence and definition",
+    "description": "Generates Spanish Homework For Sra. Autran",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,16 +11,15 @@
         "type": "git",
         "url": "git+https://github.com/K9-guardian/Spanish-Auto-Words.git"
     },
-    "author": "Krishna Girkar",
+    "author": "",
     "license": "ISC",
     "bugs": {
         "url": "https://github.com/K9-guardian/Spanish-Auto-Words/issues"
     },
     "homepage": "https://github.com/K9-guardian/Spanish-Auto-Words#readme",
     "dependencies": {
-        "google-translate-api": "^2.3.0",
+        "browserify": "^16.2.3",
         "google-translate-api-browser": "^1.1.71",
-        "jquery": "^3.3.1",
-        "readline": "^1.3.0"
+        "jquery": "^3.3.1"
     }
 }
