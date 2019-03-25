@@ -1,4 +1,11 @@
+'use strict';
+
+var $ = require('jquery');
+$("#button").click(makeDoc);
+
 async function makeDoc() {
+    var { translate } = require("google-translate-api-browser");
+
     var lines = $("#inputText").val().split(",");
     var output = $("#outputText");
     var spanishWords = [];
@@ -9,6 +16,7 @@ async function makeDoc() {
     const transKey = "AIzaSyB96TP6RRUx8aLqRgBpnFIHE5BqrCBDHI8";
     const urlTranslate = "https://translation.googleapis.com/language/translate/v2";
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    //const translate = require('google-translate-api');
 
     // Get Spanish word and sentence and English Definition
     for (let i = 0; i < lines.length; i++) {
@@ -16,6 +24,10 @@ async function makeDoc() {
         var urlDict = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/" + english + "?key=" + dictKey;
         var urlSpanish = "https://www.spanishdict.com/translate/" + english;
 
+        await translate(english, { to: 'es' }).then(res => {
+            spanishWords.push(res.text);
+        });
+        /*
         await $.get(urlTranslate, {
             q: english,
             target: "es",
@@ -23,6 +35,7 @@ async function makeDoc() {
         }, function(data) {
             spanishWords.push(data.data.translations[0].translatedText);
         });
+        */
 
         await fetch(urlDict)
             .then(response => response.json())
@@ -35,7 +48,7 @@ async function makeDoc() {
             .then(text => {
                 var sentence = "";
 
-                index = text.indexOf("<em class=\"exB\">");
+                var index = text.indexOf("<em class=\"exB\">");
 
                 while (text.charAt(index) != '>')
                     index++;
@@ -53,12 +66,18 @@ async function makeDoc() {
 
     // Convert English Definition to Spanish
     for (let i = 0; i < definitions.length; i++) {
+        /*
         await $.get(urlTranslate, {
             q: definitions[i],
             target: "es",
             key: transKey
         }, function(data) {
             definitions[i] = data.data.translations[0].translatedText;
+        });
+        */
+
+        await translate(definitions[i], { to: 'es' }).then(res => {
+            definitions[i] = res.text;
         });
     }
 
