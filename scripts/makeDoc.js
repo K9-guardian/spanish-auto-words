@@ -21,7 +21,7 @@ async function makeDoc() {
         var urlDict = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/" + english + "?key=" + dictKey;
         var urlSpanish = "https://www.spanishdict.com/translate/" + english;
 
-        await translate(english, { to: "es" })
+        await translate(english, { to: "ar" })
             .then(res => {
                 spanishWords.push(res.text);
             })
@@ -42,6 +42,7 @@ async function makeDoc() {
                 definitions.push("");
             });
 
+        /*
         await fetch(proxyurl + urlSpanish)
             .then(response => response.text())
             .then(text => {
@@ -66,11 +67,12 @@ async function makeDoc() {
                 console.error(err);
                 sentences.push("");
             });
+            */
     }
 
     // Convert English Definition to Spanish
     for (let i = 0; i < definitions.length; i++) {
-        await translate(definitions[i], { to: "es" })
+        await translate(definitions[i], { to: "ar" })
             .then(res => {
                 definitions[i] = res.text;
             })
@@ -84,7 +86,7 @@ async function makeDoc() {
     for (var i = 0; i < lines.length; i++) {
         outputString += lines[i] + " - " + spanishWords[i] + "\n";
         outputString += definitions[i] + "\n";
-        outputString += sentences[i] + "\n";
+        //outputString += sentences[i] + "\n";
     }
     output.val(outputString);
 }
