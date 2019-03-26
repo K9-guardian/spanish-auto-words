@@ -1466,7 +1466,6 @@ function translate(text, opts_) {
     return token(text)
         .then(function(token) {
             var _a;
-            //const proxyurl = "https://cors-anywhere.herokuapp.com/";
             var url = "https://translate.google." + opts.tld + "/translate_a/single";
             var data = (_a = {
                     client: "gtx",
@@ -12521,12 +12520,22 @@ async function makeDoc() {
         await translate(english, { to: "es" })
             .then(res => {
                 spanishWords.push(res.text);
+            })
+            .catch(err => {
+                console.log("Could not find translation of " + english);
+                console.error(err);
+                spanishWords.push("");
             });
 
         await fetch(urlDict)
             .then(response => response.json())
             .then(json => {
                 definitions.push(json[0].shortdef[0]);
+            })
+            .catch(err => {
+                console.log("Could not find definition of " + english);
+                console.error(err);
+                definitions.push("");
             });
 
         await fetch(proxyurl + urlSpanish)
@@ -12547,6 +12556,11 @@ async function makeDoc() {
                 }
 
                 sentences.push(sentence);
+            })
+            .catch(err => {
+                console.log("Could not find sentence for " + english);
+                console.error(err);
+                sentences.push("");
             });
     }
 
@@ -12555,6 +12569,10 @@ async function makeDoc() {
         await translate(definitions[i], { to: "es" })
             .then(res => {
                 definitions[i] = res.text;
+            })
+            .catch(err => {
+                console.log("Could not translate " + definitions[i]);
+                console.error(err);
             });
     }
 
