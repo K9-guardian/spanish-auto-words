@@ -65,7 +65,7 @@ async function makeDoc() {
     for (var i = 0; i < lines.length; i++) {
         outputString += lines[i] + " - " + spanishWords[i] + "\n";
         outputString += definitions[i] + "\n";
-        outputString += sentences[i] + "\n\n";
+        outputString += sentences[i] + "\n";
     }
     output.val(outputString);
 }

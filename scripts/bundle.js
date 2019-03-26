@@ -12509,8 +12509,6 @@ async function makeDoc() {
     var outputString = "";
     const dictKey = "7d5aa173-64d6-4c7b-8558-9bba3bca452c";
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const transKey = "AIzaSyB96TP6RRUx8aLqRgBpnFIHE5BqrCBDHI8";
-    const urlTranslate = "https://translation.googleapis.com/language/translate/v2";
 
     const { translate } = require("google-translate-api-browser");
 
@@ -12564,7 +12562,7 @@ async function makeDoc() {
     for (var i = 0; i < lines.length; i++) {
         outputString += lines[i] + " - " + spanishWords[i] + "\n";
         outputString += definitions[i] + "\n";
-        outputString += sentences[i] + "\n\n";
+        outputString += sentences[i] + "\n";
     }
     output.val(outputString);
 }
