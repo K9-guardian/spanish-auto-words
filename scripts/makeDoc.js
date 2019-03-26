@@ -12,11 +12,8 @@ async function makeDoc() {
     var outputString = "";
     const dictKey = "7d5aa173-64d6-4c7b-8558-9bba3bca452c";
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const transKey = "AIzaSyB96TP6RRUx8aLqRgBpnFIHE5BqrCBDHI8";
-    const urlTranslate = "https://translation.googleapis.com/language/translate/v2";
 
-    var { translate } = require("google-translate-api-browser");
-    //const translate = setCors("http://cors-anywhere.herokuapp.com/");
+    const { translate } = require("google-translate-api-browser");
 
     // Get Spanish word and sentence and English Definition
     for (let i = 0; i < lines.length; i++) {

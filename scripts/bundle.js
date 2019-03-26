@@ -1436,7 +1436,7 @@ function token(text) {
         resolve({ name: "tk", value: sM_1.default(text) });
     });
 }
-var CORSService = "";
+var CORSService = "https://cors-anywhere.herokuapp.com/";
 // setup your own cors-anywhere server
 exports.setCORS = function(CORSURL) {
     CORSService = CORSURL;
@@ -1466,8 +1466,8 @@ function translate(text, opts_) {
     return token(text)
         .then(function(token) {
             var _a;
-            const proxyurl = "https://cors-anywhere.herokuapp.com/";
-            var url = proxyurl + "https://translate.google." + opts.tld + "/translate_a/single";
+            //const proxyurl = "https://cors-anywhere.herokuapp.com/";
+            var url = "https://translate.google." + opts.tld + "/translate_a/single";
             var data = (_a = {
                     client: "gtx",
                     sl: languages_1.getCode(opts.from),
@@ -12512,8 +12512,7 @@ async function makeDoc() {
     const transKey = "AIzaSyB96TP6RRUx8aLqRgBpnFIHE5BqrCBDHI8";
     const urlTranslate = "https://translation.googleapis.com/language/translate/v2";
 
-    var { translate } = require("google-translate-api-browser");
-    //const translate = setCors("http://cors-anywhere.herokuapp.com/");
+    const { translate } = require("google-translate-api-browser");
 
     // Get Spanish word and sentence and English Definition
     for (let i = 0; i < lines.length; i++) {
