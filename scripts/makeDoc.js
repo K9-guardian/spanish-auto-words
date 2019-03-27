@@ -3,6 +3,16 @@
 var $ = require('jquery');
 $("#button").click(makeDoc);
 
+var firebase = require('firebase');
+firebase.initializeApp({
+    apiKey: "AIzaSyBzUM2GMWE6UnVXAz5NtEX7FyDHKi5rYIw",
+    authDomain: "spanish-auto-wor-1553364673894.firebaseapp.com",
+    databaseURL: "https://spanish-auto-wor-1553364673894.firebaseio.com",
+    projectId: "spanish-auto-wor-1553364673894",
+    storageBucket: "spanish-auto-wor-1553364673894.appspot.com",
+    messagingSenderId: "64984372953"
+});
+
 async function makeDoc() {
     var lines = $("#inputText").val().split(",");
     var output = $("#outputText");
