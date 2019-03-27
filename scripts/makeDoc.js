@@ -12,7 +12,6 @@ async function makeDoc() {
     var outputString = "";
     const dictKey = "7d5aa173-64d6-4c7b-8558-9bba3bca452c";
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
-
     const { translate } = require("google-translate-api-browser");
 
     // Get Spanish word and sentence and English Definition
@@ -42,7 +41,6 @@ async function makeDoc() {
                 definitions.push("");
             });
 
-
         await fetch(proxyurl + urlSpanish)
             .then(response => response.text())
             .then(text => {
@@ -67,7 +65,6 @@ async function makeDoc() {
                 console.error(err);
                 sentences.push("");
             });
-
     }
 
     // Convert English Definition to Spanish
