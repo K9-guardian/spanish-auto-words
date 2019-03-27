@@ -3,6 +3,8 @@
 var $ = require('jquery');
 $("#button").click(makeDoc);
 
+require('firebase/app');
+
 async function makeDoc() {
     var lines = $("#inputText").val().split(",");
     var output = $("#outputText");
