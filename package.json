@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "browserify scripts/makeDoc.js -o scripts/bundle.js"
+        "build": "browserify scripts/makeDoc.js -o scripts/bundle.js",
+        "watch": "watchify scripts/makeDoc.js -o scripts/bundle.js"
     },
     "repository": {
         "type": "git",
@@ -20,6 +21,7 @@
     "dependencies": {
         "browserify": "^16.2.3",
         "google-translate-api-browser": "^1.1.71",
-        "jquery": "^3.3.1"
+        "jquery": "^3.3.1",
+        "watchify": "^3.11.1"
     }
 }
