@@ -12500,7 +12500,7 @@ var $ = require('jquery');
 $("#button").click(makeDoc);
 
 async function makeDoc() {
-    var lines = $("#inputText").val().split(",");
+    var lines = $("#inputText").val().split("\n");
     var output = $("#outputText");
     var spanishWords = [];
     var definitions = [];
@@ -12579,7 +12579,7 @@ async function makeDoc() {
     for (var i = 0; i < lines.length; i++) {
         outputString += lines[i] + " - " + spanishWords[i] + "\n";
         outputString += definitions[i] + "\n";
-        outputString += sentences[i] + "\n";
+        outputString += sentences[i] + "\n\n";
     }
     output.val(outputString);
 }
