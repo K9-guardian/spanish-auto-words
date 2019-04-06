@@ -18,7 +18,7 @@ async function makeDoc() {
     for (let i = 0; i < lines.length; i++) {
         var english = lines[i];
         var urlDict = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/" + english + "?key=" + dictKey;
-        var urlSpanish = "https://www.spanishdict.com/translate/" + english;
+        var urlSpanish = "https://www.spanishdict.com/translate/";
 
         /*
         await translate(english, { to: "es" })
@@ -32,7 +32,7 @@ async function makeDoc() {
             });
         */
 
-        await fetch(proxyurl + urlSpanish)
+        await fetch(proxyurl + urlSpanish + english)
             .then(response => response.text())
             .then(text => {
                 var spanish = "";
