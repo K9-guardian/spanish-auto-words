@@ -20,6 +20,7 @@ async function makeDoc() {
         var urlDict = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/" + english + "?key=" + dictKey;
         var urlSpanish = "https://www.spanishdict.com/translate/" + english;
 
+        /*
         await translate(english, { to: "es" })
             .then(res => {
                 spanishWords.push(res.text);
@@ -29,24 +30,27 @@ async function makeDoc() {
                 console.error(err);
                 spanishWords.push("");
             });
-
-        await fetch(urlDict)
-            .then(response => response.json())
-            .then(json => {
-                definitions.push(json[0].shortdef[0]);
-            })
-            .catch(err => {
-                console.log("Could not find definition of " + english);
-                console.error(err);
-                definitions.push("");
-            });
+        */
 
         await fetch(proxyurl + urlSpanish)
             .then(response => response.text())
             .then(text => {
+                var spanish = "";
                 var sentence = "";
 
-                var index = text.indexOf("<em class=\"exB\">");
+                var index = text.indexOf("<a href=\"/translate/");
+
+                while (text.charAt(index) != '>')
+                    index++;
+
+                index++;
+
+                while (text.charAt(index) != '<') {
+                    spanish += text.charAt(index);
+                    index++;
+                }
+
+                index = text.indexOf("<em class=\"exB\">");
 
                 while (text.charAt(index) != '>')
                     index++;
@@ -58,12 +62,25 @@ async function makeDoc() {
                     index++;
                 }
 
+                spanishWords.push(spanish);
                 sentences.push(sentence);
             })
             .catch(err => {
-                console.log("Could not find sentence for " + english);
+                console.log("Could not find translation or sentence for " + english);
                 console.error(err);
+                spanishWords.push("");
                 sentences.push("");
+            });
+
+        await fetch(urlDict)
+            .then(response => response.json())
+            .then(json => {
+                definitions.push(json[0].shortdef[0]);
+            })
+            .catch(err => {
+                console.log("Could not find definition of " + english);
+                console.error(err);
+                definitions.push("");
             });
     }
 
