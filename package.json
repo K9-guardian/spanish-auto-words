@@ -2,7 +2,7 @@
     "name": "spanish-auto-words",
     "version": "1.0.0",
     "description": "Generates Spanish Homework For Sra. Autran",
-    "main": "index.js",
+    "main": "bundle.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "browserify scripts/makeDoc.js -o scripts/bundle.js",
