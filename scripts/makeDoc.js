@@ -12,7 +12,6 @@ async function makeDoc() {
     var outputString = "";
     const dictKey = "7d5aa173-64d6-4c7b-8558-9bba3bca452c";
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const { translate } = require("google-translate-api-browser");
 
     // Get Spanish word and sentence and English Definition
     for (let i = 0; i < lines.length; i++) {
@@ -86,6 +85,18 @@ async function makeDoc() {
 
     // Convert English Definition to Spanish
     for (let i = 0; i < definitions.length; i++) {
+        await $.ajax({
+            url: "https://8e3eypecu0.execute-api.us-east-1.amazonaws.com/default/printHelloWorld?phrase=" + definitions[i],
+            type: "GET",
+            headers: {
+                "X-Api-Key": "8xgzqlTjgd1QTU9hnYNHT4XxQMue3Z9H25WfsujI"
+            },
+            success: function(data) {
+                definitions[i] = data.body;
+            }
+        });
+
+        /*
         await translate(definitions[i], { to: "es" })
             .then(res => {
                 definitions[i] = res.text;
@@ -94,6 +105,7 @@ async function makeDoc() {
                 console.log("Could not translate " + definitions[i]);
                 console.error(err);
             });
+        */
     }
 
     // Combine word arrays into one string
