@@ -19,45 +19,31 @@ async function makeDoc() {
         var urlDict = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/" + english + "?key=" + dictKey;
         var urlSpanish = "https://www.spanishdict.com/translate/";
 
-        /*
-        await translate(english, { to: "es" })
-            .then(res => {
-                spanishWords.push(res.text);
-            })
-            .catch(err => {
-                console.log("Could not find translation of " + english);
-                console.error(err);
-                spanishWords.push("");
-            });
-        */
-
         await fetch(proxyurl + urlSpanish + english)
             .then(response => response.text())
             .then(text => {
                 var spanish = "";
                 var sentence = "";
 
-                var index = text.indexOf("<a href=\"/translate/");
+                var index = text.indexOf('"en":');
 
-                while (text.charAt(index) != '>')
+                while (!(text.substr(index, 8) === '"textEs"'))
                     index++;
 
-                index++;
+                index += 10;
 
-                while (text.charAt(index) != '<') {
-                    spanish += text.charAt(index);
+                while (text.charAt(index) != '"') {
+                    sentence += text.charAt(index);
                     index++;
                 }
 
-                index = text.indexOf("<em class=\"exB\">");
-
-                while (text.charAt(index) != '>')
+                while (!(text.substr(index, 13) === '"translation"'))
                     index++;
 
-                index++;
+                index += 15;
 
-                while (text.charAt(index) != '<') {
-                    sentence += text.charAt(index);
+                while (text.charAt(index) != '"') {
+                    spanish += text.charAt(index);
                     index++;
                 }
 
@@ -95,17 +81,6 @@ async function makeDoc() {
                 definitions[i] = data.body;
             }
         });
-
-        /*
-        await translate(definitions[i], { to: "es" })
-            .then(res => {
-                definitions[i] = res.text;
-            })
-            .catch(err => {
-                console.log("Could not translate " + definitions[i]);
-                console.error(err);
-            });
-        */
     }
 
     // Combine word arrays into one string
