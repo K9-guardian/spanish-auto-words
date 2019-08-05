@@ -10604,92 +10604,101 @@ return jQuery;
 var $ = require('jquery');
 $("#button").click(makeDoc);
 
+const dictKey = "7d5aa173-64d6-4c7b-8558-9bba3bca452c";
+const proxyurl = "https://cors-anywhere.herokuapp.com/";
+
 async function makeDoc() {
-    var lines = $("#inputText").val().split("\n");
-    var output = $("#outputText");
-    var spanishWords = [];
-    var definitions = [];
-    var sentences = [];
-    var outputString = "";
-    const dictKey = "7d5aa173-64d6-4c7b-8558-9bba3bca452c";
-    const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    let lines = $("#inputText").val().split("\n");
+    let output = $("#outputText");
+    let everything = [];
+    let outputString = "";
 
-    // Get Spanish word and sentence and English Definition
-    for (let i = 0; i < lines.length; i++) {
-        var english = lines[i];
-        var urlDict = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/" + english + "?key=" + dictKey;
-        var urlSpanish = "https://www.spanishdict.com/translate/";
+    // Asynchronously query every input
+    everything = await Promise.all(lines.map(iterate));
 
-        await fetch(proxyurl + urlSpanish + english)
-            .then(response => response.text())
-            .then(text => {
-                var spanish = "";
-                var sentence = "";
-
-                var index = text.indexOf('"en":');
-
-                while (!(text.substr(index, 8) === '"textEs"'))
-                    index++;
-
-                index += 10;
-
-                while (text.charAt(index) != '"') {
-                    sentence += text.charAt(index);
-                    index++;
-                }
-
-                while (!(text.substr(index, 13) === '"translation"'))
-                    index++;
-
-                index += 15;
-
-                while (text.charAt(index) != '"') {
-                    spanish += text.charAt(index);
-                    index++;
-                }
-
-                spanishWords.push(spanish);
-                sentences.push(sentence);
-            })
-            .catch(err => {
-                console.log("Could not find translation or sentence for " + english);
-                console.error(err);
-                spanishWords.push("");
-                sentences.push("");
-            });
-
-        await fetch(urlDict)
-            .then(response => response.json())
-            .then(json => {
-                definitions.push(json[0].shortdef[0]);
-            })
-            .catch(err => {
-                console.log("Could not find definition of " + english);
-                console.error(err);
-                definitions.push("");
-            });
+    // Print to output
+    for (let i = 0; i < everything.length; i++) {
+        outputString += everything[i].english + " - " + everything[i].spanish + "\n";
+        outputString += everything[i].definition + "\n";
+        outputString += everything[i].sentence + "\n\n";
     }
+    output.val(outputString);
+}
 
-    // Convert English Definition to Spanish
-    for (let i = 0; i < definitions.length; i++) {
+async function iterate(english) {
+    let urlDict = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/" + english + "?key=" + dictKey;
+    let urlSpanish = "https://www.spanishdict.com/translate/";
+
+    let spanish = "";
+    let sentence = "";
+    let definition = "";
+
+    // Find spanish translation and sentence
+    await fetch(proxyurl + urlSpanish + english)
+        .then(response => response.text())
+        .then(text => {
+
+            let index = text.indexOf('"en":');
+
+            while (!(text.substr(index, 8) === '"textEs"'))
+                index++;
+
+            index += 10;
+
+            while (text.charAt(index) != '"') {
+                sentence += text.charAt(index);
+                index++;
+            }
+
+            while (!(text.substr(index, 13) === '"translation"'))
+                index++;
+
+            index += 15;
+
+            while (text.charAt(index) != '"') {
+                spanish += text.charAt(index);
+                index++;
+            }
+        })
+        .catch(err => {
+            console.log("Could not find translation or sentence for " + english);
+            console.error(err);
+        });
+
+    // Find english definition
+    await fetch(urlDict)
+        .then(response => response.json())
+        .then(json => {
+            definition = json[0].shortdef[0];
+        })
+        .catch(err => {
+            console.log("Could not find definition for " + english);
+            console.error(err);
+        });
+
+    // Translate english definition
+    if (definition.length != 0) {
         await $.ajax({
-            url: "https://8e3eypecu0.execute-api.us-east-1.amazonaws.com/default/printHelloWorld?phrase=" + definitions[i],
+            url: "https://8e3eypecu0.execute-api.us-east-1.amazonaws.com/default/printHelloWorld?phrase=" + definition,
             type: "GET",
             headers: {
                 "X-Api-Key": "8xgzqlTjgd1QTU9hnYNHT4XxQMue3Z9H25WfsujI"
             },
             success: function(data) {
-                definitions[i] = data.body;
+                definition = data.body;
+            },
+            error: function(xhr, status, error) {
+                console.log("Could not find translation for definition of " + english);
+                console.error(err);
             }
         });
     }
 
-    // Combine word arrays into one string
-    for (var i = 0; i < lines.length; i++) {
-        outputString += lines[i] + " - " + spanishWords[i] + "\n";
-        outputString += definitions[i] + "\n";
-        outputString += sentences[i] + "\n\n";
-    }
-    output.val(outputString);
+    return Promise.resolve({
+        english: english,
+        spanish: spanish,
+        sentence: sentence,
+        definition: definition
+    });
 }
 },{"jquery":1}]},{},[2]);

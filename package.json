@@ -21,7 +21,6 @@
     "dependencies": {
         "browserify": "^16.2.3",
         "jquery": "^3.4.1",
-        "popper.js": "^1.14.7",
         "watchify": "^3.11.1"
     }
 }
