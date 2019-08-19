@@ -68,7 +68,8 @@ async function iterate(english) {
     await fetch(urlDict)
         .then(response => response.json())
         .then(json => {
-            definition = json[0].shortdef[0];
+            definition = (json[0].shortdef[0] == null) ? "" : json[0].shortdef[0];
+            console.log(definition);
         })
         .catch(err => {
             console.log("Could not find definition for " + english);
