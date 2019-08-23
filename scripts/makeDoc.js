@@ -69,7 +69,6 @@ async function iterate(english) {
         .then(response => response.json())
         .then(json => {
             definition = (json[0].shortdef[0] == null) ? "" : json[0].shortdef[0];
-            console.log(definition);
         })
         .catch(err => {
             console.log("Could not find definition for " + english);
@@ -78,20 +77,16 @@ async function iterate(english) {
 
     // Translate english definition
     if (definition.length != 0) {
-        await $.ajax({
-            url: "https://8e3eypecu0.execute-api.us-east-1.amazonaws.com/default/printHelloWorld?phrase=" + definition,
-            type: "GET",
-            headers: {
-                "X-Api-Key": "8xgzqlTjgd1QTU9hnYNHT4XxQMue3Z9H25WfsujI"
-            },
-            success: function(data) {
-                definition = data.body;
-            },
-            error: function(xhr, status, error) {
+        definition = definition.replace(";", "%3B");
+        await fetch("https://8e3eypecu0.execute-api.us-east-1.amazonaws.com/default/printHelloWorld?phrase=" + definition)
+            .then(response => response.json())
+            .then(json => {
+                definition = json.translation
+            })
+            .catch(err => {
                 console.log("Could not find translation for definition of " + english);
                 console.error(err);
-            }
-        });
+            })
     }
 
     return Promise.resolve({
