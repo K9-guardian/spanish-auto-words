@@ -81,7 +81,7 @@ async function iterate(english) {
         await fetch("https://8e3eypecu0.execute-api.us-east-1.amazonaws.com/default/printHelloWorld?phrase=" + definition)
             .then(response => response.json())
             .then(json => {
-                definition = json.translation
+                definition = json.translation;
             })
             .catch(err => {
                 console.log("Could not find translation for definition of " + english);
