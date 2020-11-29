@@ -107,7 +107,6 @@ async function uploadQuizlet() {
     if (words == null || words.length == 0) {
         console.log('Bad URL')
         $('#upload').prop('disabled', false)
-        removeUploadSpinner()
         return
     }
 
