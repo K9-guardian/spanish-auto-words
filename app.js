@@ -178,6 +178,7 @@ function createNewCard() {
     $('#create').before(cardHTML)
     const newCard = $('#content').find('.card-body').last()
     newCard.find('[placeholder=English]').change(() => updateCard(newCard))
+    newCard.find('[placeholder=English]').focus()
 }
 
 function createProgressBar() {
