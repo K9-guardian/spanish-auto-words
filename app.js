@@ -92,6 +92,7 @@ async function uploadQuizlet() {
     if (!url.startsWith("https://quizlet.com")) {
         console.log('Bad URL')
         $('#upload').prop('disabled', false)
+        removeUploadSpinner()
         return
     }
 
