@@ -148,7 +148,7 @@ async function getDictionary(word) {
 }
 
 function makeDropdownItem(str) {
-    return `<a class="dropdown-item"> ${str} </a>`
+    return `<a class="dropdown-item">${str}</a>`
 }
 
 function createNewCard() {
