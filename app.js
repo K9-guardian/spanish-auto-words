@@ -15,7 +15,7 @@ let currentProgress = 0
 async function updateCard(e) {
     $(e).find('[placeholder]').prop('disabled', true)
     const english = $(e).find('[placeholder=English]').val()
-    let translation = getTranslation(english)
+    let translation = ($(e).find('[placeholder=Spanish]').val() !== '') ? $(e).find('[placeholder=Spanish]').val() : getTranslation(english)
     let dictionary = getDictionary(english)
 
     const response = await Promise.all([translation, dictionary])
@@ -28,6 +28,9 @@ async function updateCard(e) {
 
     const definitionsDropdown = $(e).find('.dropdown-menu').first()
     const sentencesDropdown = $(e).find('.dropdown-menu').last()
+
+    definitionsDropdown.empty()
+    sentencesDropdown.empty()
     
     dictionary.definitions.forEach(e => definitionsDropdown.append(makeDropdownItem(e)))
     dictionary.sentences.forEach(e => sentencesDropdown.append(makeDropdownItem(e)))
@@ -139,6 +142,8 @@ async function getTranslation(english) {
 
 async function getDictionary(word) {
     const dictionaryURL = "https://gdjosxqauk.execute-api.us-west-1.amazonaws.com/default/getDictionary?word="
+    word = word.replace(/\bto\b|\[.*\]|\(.*\)/, '')
+    word = word.split(/\bor\b|,/)[0]
     const response = await fetch(dictionaryURL + word, {
         headers: {
             "x-api-key": "AtTjaZXXnc33G3ZBX18d6BGEJAkgPhS88YgEAnOj"
