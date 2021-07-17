@@ -142,7 +142,7 @@ async function getTranslation(english) {
 
 async function getDictionary(word) {
     const dictionaryURL = "https://gdjosxqauk.execute-api.us-west-1.amazonaws.com/default/getDictionary?word="
-    word = word.replace(/\bto\b|\[.*\]|\(.*\)/, '').split(/(\bor\b|,)/)[0]
+    word = word.replace(/\bto\b|\[.*\]|\(.*\)/, '').split(/\bor\b|,/)[0]
     const response = await fetch(dictionaryURL + word, {
         headers: {
             "x-api-key": "AtTjaZXXnc33G3ZBX18d6BGEJAkgPhS88YgEAnOj"
