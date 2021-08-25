@@ -1,5 +1,8 @@
 $(document).ready(function () {
     $('#create').click(createNewCard)
+    $('#content').find('.close').click(function() {
+        $(this).parent().parent().remove()
+    })
     $('#content').find('[placeholder=English]').change(function() {
         updateCard($(this).parent().parent())
     })
@@ -49,7 +52,7 @@ async function updateOutput() {
     const numCards = $('#content').children().length - 1
     const numRows = 4 * numCards - 1
     const values = []
-    $('#content').find('.card-body').each(function(i) {
+    $('#content').find('.card-body').each(function() {
         const obj = {
             english: $(this).find('[placeholder=English]').val(),
             spanish: $(this).find('[placeholder=Spanish]').val(),
@@ -59,16 +62,18 @@ async function updateOutput() {
         values.push(obj)
     })
 
-    let str = ""
     progressMax = numCards
     Promise.all(values.map(async e => ({
         english: e.english,
         spanish: e.spanish,
-        definition: Object.keys(definitions).includes(e.definition) ? definitions[e.definition] : await addTranslation(e.definition, definitions),
-        sentence: Object.keys(sentences).includes(e.sentence) ? sentences[e.sentence] : await addTranslation(e.sentence, sentences)
+        definition: (Object.keys(definitions).includes(e.definition) &&
+                     definitions[e.definition] != '') ?
+                     definitions[e.definition] : await addTranslation(e.definition, definitions),
+        sentence: (Object.keys(sentences).includes(e.sentence) &&
+                   sentences[e.sentence] != '') ?
+                   sentences[e.sentence] : await addTranslation(e.sentence, sentences)
     }))).then(output => {
-        output.forEach(e => str += `${e.english} - ${e.spanish}\n${e.definition}\n${e.sentence}\n\n`)
-        $('#output').val(str)
+        $('#output').val(output.reduce((str, e) => str += `${e.english} - ${e.spanish}\n${e.definition}\n${e.sentence}\n\n`, ""))
         $('#output').prop('rows', numRows)
         $('#output').prop('readonly', false)
         $('#update').prop('disabled', false)
@@ -77,7 +82,9 @@ async function updateOutput() {
 }
 
 async function addTranslation(phrase, map) {
+    console.log(`Translating ${phrase}`)
     const translation = await getTranslation(phrase)
+    console.log(`Translation for ${phrase}: ${translation}`)
     currentProgress++
     const percentage = Math.floor(currentProgress * 100 / progressMax)
     $('#progress').attr('style', 'width: ' + percentage + '%')
@@ -158,6 +165,11 @@ function makeDropdownItem(str) {
 function createNewCard() {
     const cardHTML = `
     <div class="card m-3 bg-light">
+        <div class="card-header">
+            <button type="button" class="close">
+                <span>&times;</span>
+            </button>
+        </div>
         <div class="card-body">
             <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="English">
@@ -180,7 +192,10 @@ function createNewCard() {
         </div>
     </div>`
     $('#create').before(cardHTML)
-    const newCard = $('#content').find('.card-body').last()
+    const newCard = $('#content').find('.card').last()
+    newCard.find('.close').click(function() {
+        $(this).parent().parent().remove()
+    })
     newCard.find('[placeholder=English]').change(() => updateCard(newCard))
     newCard.find('[placeholder=English]').focus()
 }
