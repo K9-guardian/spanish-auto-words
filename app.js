@@ -84,7 +84,8 @@ async function updateOutput() {
 async function addTranslation(phrase, map) {
     console.log(`Translating ${phrase}`)
     let translation = await getTranslation(phrase)
-    while (translation === '') translation = await getTranslation(phrase)
+    for (let i = 0; i < 10 && translation === ''; ++i)
+        translation = await getTranslation(phrase)
     console.log(`Translation for ${phrase}: ${translation}`)
     currentProgress++
     const percentage = Math.floor(currentProgress * 100 / progressMax)
