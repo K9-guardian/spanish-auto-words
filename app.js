@@ -66,12 +66,12 @@ async function updateOutput() {
     Promise.all(values.map(async e => ({
         english: e.english,
         spanish: e.spanish,
-        definition: (Object.keys(definitions).includes(e.definition) &&
-                     definitions[e.definition] != '') ?
-                     definitions[e.definition] : await addTranslation(e.definition, definitions),
-        sentence: (Object.keys(sentences).includes(e.sentence) &&
-                   sentences[e.sentence] != '') ?
-                   sentences[e.sentence] : await addTranslation(e.sentence, sentences)
+        definition: definitions.hasOwnProperty(e.definition) ?
+                    definitions[e.definition] :
+                    await addTranslation(e.definition, definitions),
+        sentence: sentences.hasOwnProperty(e.sentence) ?
+                  sentences[e.sentence] :
+                  await addTranslation(e.sentence, sentences)
     }))).then(output => {
         $('#output').val(output.reduce((str, e) => str += `${e.english} - ${e.spanish}\n${e.definition}\n${e.sentence}\n\n`, ""))
         $('#output').prop('rows', numRows)
@@ -83,7 +83,8 @@ async function updateOutput() {
 
 async function addTranslation(phrase, map) {
     console.log(`Translating ${phrase}`)
-    const translation = await getTranslation(phrase)
+    let translation = await getTranslation(phrase)
+    while (translation === '') translation = await getTranslation(phrase)
     console.log(`Translation for ${phrase}: ${translation}`)
     currentProgress++
     const percentage = Math.floor(currentProgress * 100 / progressMax)
@@ -114,7 +115,7 @@ async function uploadQuizlet() {
     const words = await response.json()
     removeUploadSpinner()
 
-    if (words == null || words.length == 0) {
+    if (words === null || words.length === 0) {
         console.log('Bad URL')
         $('#upload').prop('disabled', false)
         return
